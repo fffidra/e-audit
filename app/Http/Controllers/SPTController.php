@@ -742,6 +742,19 @@ class SPTController extends Controller
         // Buat sekcinya
         $section = $phpWord->addSection();
 
+        $table = $section->addTable();
+$table->addRow();
+$table->addCell(1500)->addImage(public_path("logo.png"), ['width' => 50]);
+$table->addCell(8500)->addText('PEMERINTAH KABUPATEN MAGETAN', ['bold' => true, 'size' => 12.7]);
+$table->addRow();
+$table->addCell(8500, ['gridSpan' => 2])->addText('I N S P E K T O R A T', ['bold' => true, 'size' => 16]);
+$table->addRow();
+$table->addCell(8500)->addText('Jl. Tripandita No. 17 Magetan Kode Pos 63319', ['size' => 10]);
+$table->addRow();
+$table->addCell(8500)->addText('Telp. (0351) 897113 Fax. (0351) 897161', ['size' => 10]);
+$table->addRow();
+$table->addCell(8500)->addText('E-mail : inspektorat@magetan.go.id Website : http://inspektorat.magetan.go.id', ['size' => 10]);
+
         $section->addText('SURAT PERINTAH TUGAS', ['bold' => true, 'underline' => 'single', 'size' => 16, 'alignment' => 'center']);
         $section->addText('Nomor : 094/          /403.060/2023', ['bold' => true, 'size' => 11, 'alignment' => 'center']);
         $section->addText('DASAR', ['bold' => true]);
@@ -776,6 +789,53 @@ $section->addText('UNTUK', ['bold' => true]);
 $section->addText('Kepada pihak-pihak yang bersangkutan diminta kesediannya untuk memberikan keterangan yang diperlukan guna kelancaran dan penyelesaian tugas dimaksud.', ['size' => 11]);
 $section->addText('Sebagai informasi, disampaikan bahwa Inspektorat Kabupaten Magetan tidak memungut biaya apapun atas pelayanan yang diberikan, dan untuk menjaga integritas dimohon untuk tidak menyampaikan pemberian dalam bentuk apapun kepada Pejabat/Pegawai Inspektorat Kabupaten Magetan.', ['size' => 11]);
         // Tambahkan konten ke dalam sekcinya, sesuai dengan kebutuhan Anda
+
+
+        $section->addTextBreak();
+
+// Membuat table untuk bagian "Pada Tanggal"
+$tableTanggal = $section->addTable(['borderSize' => 0, 'cellMargin' => 0]);
+$tableTanggal->addRow();
+$tableTanggal->addCell(5000)->addText('Dikeluarkan di', ['size' => 11]);
+$tableTanggal->addCell(5000)->addText(':', ['size' => 11]);
+$tableTanggal->addCell(5000)->addText('M A G E T A N', ['size' => 11]);
+
+$tableTanggal->addRow();
+$tableTanggal->addCell(5000, ['cellMarginTop' => 100])->addText('Pada Tanggal', ['size' => 11, 'borderBottomSize' => 2]);
+$tableTanggal->addCell(5000)->addText(':', ['size' => 11, 'borderBottomSize' => 2]);
+$tableTanggal->addCell(5000)->addText(date('F Y'), ['size' => 11, 'borderBottomSize' => 2]);
+
+// Menambahkan baris kosong
+$section->addTextBreak();
+
+// Membuat table untuk bagian "INSPEKTUR KABUPATEN MAGETAN"
+$tableInspektur = $section->addTable(['borderSize' => 0, 'cellMargin' => 0]);
+$tableInspektur->addRow();
+$tableInspektur->addCell(15000, ['gridSpan' => 3])->addText('INSPEKTUR KABUPATEN MAGETAN', ['size' => 11, 'alignment' => 'center', 'bold' => true]);
+
+// Menambahkan baris kosong
+$section->addTextBreak();
+
+// Membuat table untuk bagian "Nama Inspektur"
+$tableNamaInspektur = $section->addTable(['borderSize' => 0, 'cellMargin' => 0]);
+$tableNamaInspektur->addRow();
+$tableNamaInspektur->addCell(15000, ['gridSpan' => 3])->addText('Nama Inspektur', ['size' => 11, 'alignment' => 'center', 'bold' => true, 'underline' => 'single']);
+
+// Menambahkan baris kosong
+$section->addTextBreak();
+
+// Membuat table untuk bagian "Nama Pangkat"
+$tableNamaPangkat = $section->addTable(['borderSize' => 0, 'cellMargin' => 0]);
+$tableNamaPangkat->addRow();
+$tableNamaPangkat->addCell(15000, ['gridSpan' => 3])->addText('Nama Pangkat', ['size' => 11, 'alignment' => 'center']);
+
+// Menambahkan baris kosong
+$section->addTextBreak();
+
+// Membuat table untuk bagian "NIP"
+$tableNIP = $section->addTable(['borderSize' => 0, 'cellMargin' => 0]);
+$tableNIP->addRow();
+$tableNIP->addCell(15000, ['gridSpan' => 3])->addText('NIP. 00000000 000000 0 000', ['size' => 11, 'alignment' => 'center']);
 
         // Simpan ke file
         $filename = 'Surat_Perintah_Tugas_' . date('Y-m-d_H-i-s') . '.docx';
