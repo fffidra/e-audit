@@ -29,6 +29,7 @@
                                 <button data-bs-toggle="modal" data-bs-target="#tambahsptbaru" class="btn btn-primary">Tambah SPT</button>
                             @endif
                         </div>
+                        
                         <div class="container-fluid table-responsive px-3 py-3">
                             <table class="table table-striped" id="tabelSPT" style="width:100%">
                                 <thead>
