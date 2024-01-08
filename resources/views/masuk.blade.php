@@ -4,6 +4,7 @@
     Masuk
 @endsection
 
+
 @section('content')
     <div class="authentication-bg min-vh-100">
         <div class="bg-overlay"></div>
