@@ -743,7 +743,7 @@ class SPTController extends Controller
         $row = $table->addRow();
 
         // Kolom untuk logo di bagian kiri
-        $row->addCell(2500)->addImage(public_path("logo.png"), ['width' => 50]);
+        $row->addCell(2500)->addImage(public_path("logo.png"), ['width' => 75]);
 
         // Kolom untuk teks di bagian kanan
         $textCell = $row->addCell(7500);
@@ -755,36 +755,45 @@ class SPTController extends Controller
 
         $textCell->setAlignment(\PhpOffice\PhpWord\SimpleType\Jc::CENTER);
 
-        $section->addText('SURAT PERINTAH TUGAS', ['bold' => true, 'underline' => 'single', 'size' => 16, 'alignment' => 'center']);
-        $section->addText('Nomor : 094/    /403.060/2023', ['bold' => true, 'size' => 11, 'alignment' => 'center']);
+        $textRunHeader = $section->addTextRun(['alignment' => 'center']);
+        $textRunHeader->addText('SURAT  PERINTAH  TUGAS', ['bold' => true, 'underline' => 'single', 'size' => 16]);
+        $textRunHeader->addTextBreak();
+        $textRunHeader->addText('Nomor : 094/      /403.060/2024', ['bold' => true, 'size' => 11]);
+
+        $section->addTextBreak();
+        
+            
 
         $cleanedDasarSPT = strip_tags($spt->dasar_spt);
         $textRunDasar = $section->addTextRun();
         $textRunDasar->addText('DASAR : ', ['bold' => true, 'size' => 11]);
         $textRunDasar->addText($cleanedDasarSPT, ['size' => 11]);
 
-        $section->addTextBreak();
-
-        $section->addText('M E M E R I N T A H K A N', ['bold' => true, 'alignment' => 'center', 'size' => 11]);
+        $textRunCenter = $section->addTextRun(['alignment' => 'center']);
+        $textRunCenter->addText('M E M E R I N T A H K A N', ['bold' => true, 'alignment' => 'center', 'size' => 11]);
 
         // Tambahkan tabel untuk bagian "KEPADA"
-        $section->addText('KEPADA : ', ['bold' => true, 'size' => 11]);
         $lebarA4 = 21 * 600; 
-        $table = $section->addTable(['borderSize' => 1, 'borderColor' => '000000']);
+        $table = $section->addTable(['borderSize' => 1, 'alignment' => 'center']);
+        
+        // Baris pertama untuk teks "KEPADA"
         $table->addRow();
-        $table->addCell($lebarA4 * 0.1)->addText('No.', ['bold' => true]);
-        $table->addCell($lebarA4 * 0.4)->addText('NAMA', ['bold' => true]);
-        $table->addCell($lebarA4 * 0.2)->addText('KETERANGAN', ['bold' => true]);
-        $table->addCell($lebarA4 * 0.1)->addText('JANGKA WAKTU', ['bold' => true]);
+        $table->addCell($lebarA4 * 0.15)->addText('KEPADA : ', ['bold' => true, 'size' => 11, 'borderColor' => 'white']);
+        $table->addCell($lebarA4 * 0.05)->addText('No.', ['bold' => true, 'size' => 11]);
+        $table->addCell($lebarA4 * 0.4)->addText('NAMA', ['bold' => true, 'size' => 11]);
+        $table->addCell($lebarA4 * 0.2)->addText('KETERANGAN', ['bold' => true, 'size' => 11]);
+        $table->addCell($lebarA4 * 0.1)->addText('JANGKA WAKTU', ['bold' => true, 'size' => 11]);
+        
         $no = 1;
         foreach ($spt->anggotaSPT as $anggota) {
             $table->addRow();
-            $table->addCell(500)->addText($no++);
+            $table->addCell(750)->addText('', ['borderColor' => 'white']);
+            $table->addCell(250)->addText($no++);
             $table->addCell(4000)->addText('Sdr. ' . strtoupper($anggota->relasi_pegawai->nama_pegawai));
             $table->addCell(2000)->addText($anggota->keterangan);
             $table->addCell(1000)->addText($jangkaWaktu . ' hari');
         }
-
+        
         $section->addTextBreak();
 
         // Tambahkan paragraf untuk bagian "UNTUK"
@@ -793,6 +802,13 @@ class SPTController extends Controller
         $textRunUntuk->addText($cleanedDasarSPT, ['size' => 11]);
 
         // Tambahkan paragraf untuk bagian informasi tambahan
+
+        // $textRunJustify = $section->addTextRun(['alignment' => 'justify']);
+        // $textRunJustify->addText('Kegiatan tersebut dilaksanakan selama ' . $jangkaWaktu . ' (' . $ketJangkaWaktu . ') hari kerja dalam kurun waktu ' . $kurun_waktu . ' dan biaya yang berkaitan dengan penugasan menjadi beban Anggaran Inspektorat Kabupaten Magetan.', ['size' => 11]);
+        // $textRunJustify->addText('Kepada pihak-pihak yang bersangkutan diminta kesediannya untuk memberikan keterangan yang diperlukan guna kelancaran dan penyelesaian tugas dimaksud.', ['size' => 11]);
+        // $textRunJustify->addText('Sebagai informasi, disampaikan bahwa Inspektorat Kabupaten Magetan tidak memungut biaya apapun atas pelayanan yang diberikan, dan untuk menjaga integritas dimohon untuk tidak menyampaikan pemberian dalam bentuk apapun kepada Pejabat/Pegawai Inspektorat Kabupaten Magetan.', ['size' => 11]);
+
+
         $section->addText('Kegiatan tersebut dilaksanakan selama ' . $jangkaWaktu . ' (' . $ketJangkaWaktu . ') hari kerja dalam kurun waktu ' . $kurun_waktu . ' dan biaya yang berkaitan dengan penugasan menjadi beban Anggaran Inspektorat Kabupaten Magetan.', ['size' => 11]);
         $section->addText('Kepada pihak-pihak yang bersangkutan diminta kesediannya untuk memberikan keterangan yang diperlukan guna kelancaran dan penyelesaian tugas dimaksud.', ['size' => 11]);
         $section->addText('Sebagai informasi, disampaikan bahwa Inspektorat Kabupaten Magetan tidak memungut biaya apapun atas pelayanan yang diberikan, dan untuk menjaga integritas dimohon untuk tidak menyampaikan pemberian dalam bentuk apapun kepada Pejabat/Pegawai Inspektorat Kabupaten Magetan.', ['size' => 11]);
