@@ -741,6 +741,7 @@ class SPTController extends Controller
         $section = $phpWord->addSection();
         $table = $section->addTable();
         $row = $table->addRow();
+        $lebarA4 = 21 * 600; 
 
         // Kolom untuk logo di bagian kiri
         $row->addCell(2500)->addImage(public_path("logo.png"), ['width' => 75]);
@@ -756,97 +757,179 @@ class SPTController extends Controller
         $textCell->setAlignment(\PhpOffice\PhpWord\SimpleType\Jc::CENTER);
 
         $textRunHeader = $section->addTextRun(['alignment' => 'center']);
-        $textRunHeader->addText('SURAT  PERINTAH  TUGAS', ['bold' => true, 'underline' => 'single', 'size' => 16]);
+        $textRunHeader->addText('SURAT PERINTAH TUGAS', ['bold' => true, 'underline' => 'single', 'size' => 16]);
         $textRunHeader->addTextBreak();
         $textRunHeader->addText('Nomor : 094/      /403.060/2024', ['bold' => true, 'size' => 11]);
 
         $section->addTextBreak();
         
-            
-
+        // DASAR
+        $tableDasar = $section->addTable(['borderSize' => 0, 'alignment' => 'center', 'borderColor' => 'white']);
+        $tableDasar->addRow();
+        $tableDasar->addCell($lebarA4 * 0.14)->addText('DASAR', ['bold' => true, 'size' => 11]);
+        $tableDasar->addCell($lebarA4 * 0.01)->addText(':', ['bold' => true, 'size' => 11]);
         $cleanedDasarSPT = strip_tags($spt->dasar_spt);
-        $textRunDasar = $section->addTextRun();
-        $textRunDasar->addText('DASAR : ', ['bold' => true, 'size' => 11]);
-        $textRunDasar->addText($cleanedDasarSPT, ['size' => 11]);
+        $tableDasar->addCell($lebarA4 * 0.85)->addText($cleanedDasarSPT, ['size' => 11]);
 
+        // MEMERINTAHKAN
         $textRunCenter = $section->addTextRun(['alignment' => 'center']);
-        $textRunCenter->addText('M E M E R I N T A H K A N', ['bold' => true, 'alignment' => 'center', 'size' => 11]);
+        $textRunCenter->addText('M E M E R I N T A H K A N', ['bold' => true, 'size' => 11]);
 
         // Tambahkan tabel untuk bagian "KEPADA"
-        $lebarA4 = 21 * 600; 
         $table = $section->addTable(['borderSize' => 1, 'alignment' => 'center']);
         
-        // Baris pertama untuk teks "KEPADA"
         $table->addRow();
-        $table->addCell($lebarA4 * 0.15)->addText('KEPADA : ', ['bold' => true, 'size' => 11, 'borderColor' => 'white']);
-        $table->addCell($lebarA4 * 0.05)->addText('No.', ['bold' => true, 'size' => 11]);
-        $table->addCell($lebarA4 * 0.4)->addText('NAMA', ['bold' => true, 'size' => 11]);
-        $table->addCell($lebarA4 * 0.2)->addText('KETERANGAN', ['bold' => true, 'size' => 11]);
-        $table->addCell($lebarA4 * 0.1)->addText('JANGKA WAKTU', ['bold' => true, 'size' => 11]);
+        $table->addCell($lebarA4 * 0.14)->addText('KEPADA', ['bold' => true, 'size' => 11, 'borderColor' => 'white']);        
+        $table->addCell($lebarA4 * 0.01)->addText(':', ['bold' => true, 'size' => 11, 'borderColor' => 'white']);        
+        $table->addCell($lebarA4 * 0.05)->addText('No.', ['bold' => true, 'size' => 11], array('align' => 'center'));
+        $table->addCell($lebarA4 * 0.45)->addText('NAMA', ['bold' => true, 'size' => 11, 'spaceAfter' => 250,'spaceBefore' => 250], array('align' => 'center'));
+        $table->addCell($lebarA4 * 0.2)->addText('KETERANGAN', ['bold' => true, 'size' => 11], array('align' => 'center'));
+        $table->addCell($lebarA4 * 0.15)->addText('JANGKA WAKTU', ['bold' => true, 'size' => 11], array('align' => 'center'));
         
         $no = 1;
         foreach ($spt->anggotaSPT as $anggota) {
             $table->addRow();
-            $table->addCell(750)->addText('', ['borderColor' => 'white']);
-            $table->addCell(250)->addText($no++);
-            $table->addCell(4000)->addText('Sdr. ' . strtoupper($anggota->relasi_pegawai->nama_pegawai));
-            $table->addCell(2000)->addText($anggota->keterangan);
-            $table->addCell(1000)->addText($jangkaWaktu . ' hari');
+            $table->addCell($lebarA4 * 0.14)->addText('');            
+            $table->addCell($lebarA4 * 0.01)->addText('');            
+            $table->addCell($lebarA4 * 0.05)->addText($no++, ['size' => 11], array('align' => 'center'));
+            $table->addCell($lebarA4 * 0.43)->addText('Sdr. ' . strtoupper($anggota->relasi_pegawai->nama_pegawai), ['size' => 11]);
+            $table->addCell($lebarA4 * 0.22)->addText($anggota->keterangan, ['size' => 11], array('align' => 'center'));
+            $table->addCell($lebarA4 * 0.15)->addText($jangkaWaktu . ' hari', ['size' => 11], array('align' => 'center'));
         }
         
         $section->addTextBreak();
 
-        // Tambahkan paragraf untuk bagian "UNTUK"
-        $textRunUntuk = $section->addTextRun();
-        $textRunUntuk->addText('UNTUK : ', ['bold' => true, 'size' => 11]);
-        $textRunUntuk->addText($cleanedDasarSPT, ['size' => 11]);
+        // UNTUK
+        $tableUntuk = $section->addTable(['borderSize' => 0, 'alignment' => 'center', 'borderColor' => 'white']);
+        $tableUntuk->addRow();
+        $tableUntuk->addCell($lebarA4 * 0.15)->addText('UNTUK', ['bold' => true, 'size' => 11]);
+        $tableUntuk->addCell($lebarA4 * 0.01)->addText(':', ['bold' => true, 'size' => 11]);
+        $tableUntuk->addCell($lebarA4 * 0.85)->addText($spt->untuk_spt, ['size' => 11]);
 
         // Tambahkan paragraf untuk bagian informasi tambahan
 
-        // $textRunJustify = $section->addTextRun(['alignment' => 'justify']);
+        // $textRunJustify = $section->addTextRun(['alignment' => 'both']);
         // $textRunJustify->addText('Kegiatan tersebut dilaksanakan selama ' . $jangkaWaktu . ' (' . $ketJangkaWaktu . ') hari kerja dalam kurun waktu ' . $kurun_waktu . ' dan biaya yang berkaitan dengan penugasan menjadi beban Anggaran Inspektorat Kabupaten Magetan.', ['size' => 11]);
+        // $section->addTextBreak();
         // $textRunJustify->addText('Kepada pihak-pihak yang bersangkutan diminta kesediannya untuk memberikan keterangan yang diperlukan guna kelancaran dan penyelesaian tugas dimaksud.', ['size' => 11]);
+        // $section->addTextBreak();
         // $textRunJustify->addText('Sebagai informasi, disampaikan bahwa Inspektorat Kabupaten Magetan tidak memungut biaya apapun atas pelayanan yang diberikan, dan untuk menjaga integritas dimohon untuk tidak menyampaikan pemberian dalam bentuk apapun kepada Pejabat/Pegawai Inspektorat Kabupaten Magetan.', ['size' => 11]);
 
 
-        $section->addText('Kegiatan tersebut dilaksanakan selama ' . $jangkaWaktu . ' (' . $ketJangkaWaktu . ') hari kerja dalam kurun waktu ' . $kurun_waktu . ' dan biaya yang berkaitan dengan penugasan menjadi beban Anggaran Inspektorat Kabupaten Magetan.', ['size' => 11]);
-        $section->addText('Kepada pihak-pihak yang bersangkutan diminta kesediannya untuk memberikan keterangan yang diperlukan guna kelancaran dan penyelesaian tugas dimaksud.', ['size' => 11]);
-        $section->addText('Sebagai informasi, disampaikan bahwa Inspektorat Kabupaten Magetan tidak memungut biaya apapun atas pelayanan yang diberikan, dan untuk menjaga integritas dimohon untuk tidak menyampaikan pemberian dalam bentuk apapun kepada Pejabat/Pegawai Inspektorat Kabupaten Magetan.', ['size' => 11]);
+        $section->addTextBreak();
+
+        $section->addText('Kegiatan tersebut dilaksanakan selama ' . $jangkaWaktu . ' (' . $ketJangkaWaktu . ') hari kerja dalam kurun waktu ' . $kurun_waktu . ' dan biaya yang berkaitan dengan penugasan menjadi beban Anggaran Inspektorat Kabupaten Magetan.', ['size' => 11, 'alignment' => 'both']);
+        $section->addText('Kepada pihak-pihak yang bersangkutan diminta kesediannya untuk memberikan keterangan yang diperlukan guna kelancaran dan penyelesaian tugas dimaksud.', ['size' => 11, 'alignment' => 'both']);
+        $section->addText('Sebagai informasi, disampaikan bahwa Inspektorat Kabupaten Magetan tidak memungut biaya apapun atas pelayanan yang diberikan, dan untuk menjaga integritas dimohon untuk tidak menyampaikan pemberian dalam bentuk apapun kepada Pejabat/Pegawai Inspektorat Kabupaten Magetan.', ['size' => 11, 'alignment' => 'both']);
 
         $section->addTextBreak();
 
-        // Membuat table untuk bagian "Pada Tanggal"
-        $tableTanggal = $section->addTable(['borderSize' => 0, 'cellMargin' => 0, 'borderColor' => 'auto']);
-        $tableTanggal->addRow();
-        $tableTanggal->addCell(1000)->addText('Dikeluarkan di', ['size' => 11]);
-        $tableTanggal->addCell(1000)->addText(':', ['size' => 11]);
-        $tableTanggal->addCell(1000)->addText('M A G E T A N', ['size' => 11, 'alignment' => 'right']);
-        
-        $tableTanggal->addRow();
-        $tableTanggal->addCell(5000, ['cellMarginTop' => 100])->addText('Pada Tanggal', ['size' => 11, 'borderBottomSize' => 2]);
-        $tableTanggal->addCell(5000)->addText(':', ['size' => 11, 'borderBottomSize' => 2]);
+        $tableFooter = $section->addTable(['width' => 50, 'borderColor' => 'white', 'borderSize' => 1, 'alignment' => 'right']);
+        $tableFooter->addRow();
+        $tableFooter->addCell(2000)->addText('Dikeluarkan di', ['size' => 11], array('align' => 'left'));
+        $tableFooter->addCell(700)->addText(':', ['size' => 11], array('align' => 'center'));
+        $tableFooter->addCell(2000)->addText('M A G E T A N', ['size' => 11], array('align' => 'right'));
+
+        $tableFooter->addRow();
+        $tableFooter->addCell(2000)->addText('Pada Tanggal', ['size' => 11], array('align' => 'left', 'borderBottomSize' => 2, 'borderBottomColor' => 'black'));
+        $tableFooter->addCell(700)->addText(':', ['size' => 11], array('align' => 'center', 'borderBottomSize' => 2, 'borderBottomColor' => 'black'));
         $bulanIndonesia = Carbon::parse(now())->locale('id_ID')->isoFormat('MMMM YYYY');
+        $tableFooter->addCell(2000)->addText($bulanIndonesia, ['size' => 11], array('align' => 'right', 'borderBottomSize' => 2, 'borderBottomColor' => 'black'));
 
-        $tableTanggal->addCell(5000)->addText($bulanIndonesia, ['size' => 11, 'borderBottomSize' => 2]);
-        // Membuat table untuk bagian "INSPEKTUR KABUPATEN MAGETAN"
-        $tableInspektur = $section->addTable(['borderSize' => 0, 'cellMargin' => 0, 'borderColor' => 'white']);
-        $tableInspektur->addRow();
-        $tableInspektur->addCell(15000, ['gridSpan' => 3])->addText('INSPEKTUR KABUPATEN MAGETAN', ['size' => 11, 'alignment' => 'center', 'bold' => true]);
+        $tableFoot = $section->addTable(['width' => 50, 'borderColor' => 'white', 'borderSize' => 1, 'alignment' => 'right']);
+        $tableFoot->addRow();
+        $tableFoot->addCell(4700)->addText('INSPEKTUR KABUPATEN MAGETAN', ['size' => 11, 'bold' => true], array('align' => 'center'));
 
-        // Membuat table untuk bagian "Nama Inspektur"
-        $tableNamaInspektur = $section->addTable(['borderSize' => 0, 'cellMargin' => 0, 'borderColor' => 'white']);
-        $tableNamaInspektur->addRow();
-        $tableNamaInspektur->addCell(15000, ['gridSpan' => 3])->addText('Nama Inspektur', ['size' => 11, 'alignment' => 'center', 'bold' => true, 'underline' => 'single']);
+        $tableFoot->addRow();
+        $tableFoot->addCell(4700)->addText('', ['size' => 11], array('align' => 'center'));
 
-        // Membuat table untuk bagian "Nama Pangkat"
-        $tableNamaPangkat = $section->addTable(['borderSize' => 0, 'cellMargin' => 0, 'borderColor' => 'white']);
-        $tableNamaPangkat->addRow();
-        $tableNamaPangkat->addCell(15000, ['gridSpan' => 3])->addText('Nama Pangkat', ['size' => 11, 'alignment' => 'center']);
+        $tableFoot->addRow();
+        $tableFoot->addCell(4700)->addText('', ['size' => 11], array('align' => 'center'));
 
-        // Membuat table untuk bagian "NIP"
-        $tableNIP = $section->addTable(['borderSize' => 0, 'cellMargin' => 0, 'borderColor' => 'white']);
-        $tableNIP->addRow();
-        $tableNIP->addCell(15000, ['gridSpan' => 3])->addText('NIP. 00000000 000000 0 000', ['size' => 11, 'alignment' => 'center']);
+        $tableFoot->addRow();
+        $tableFoot->addCell(4700)->addText('', ['size' => 11], array('align' => 'center'));
+
+        $tableFoot->addRow();
+        $tableFoot->addCell(4700)->addText('', ['size' => 11], array('align' => 'center'));
+
+        $tableFoot->addRow();
+        $tableFoot->addCell(4700)->addText('', ['size' => 11], array('align' => 'center'));
+
+        $tableFoot->addRow();
+        $tableFoot->addCell(4700)->addText('Nama Inspektur', ['size' => 11, 'bold' => true, 'underline' => 'single'], array('align' => 'center'));
+
+        $tableFoot->addRow();
+        $tableFoot->addCell(4700)->addText('Nama Pangkat', ['size' => 11], array('align' => 'center'));
+
+        $tableFoot->addRow();
+        $tableFoot->addCell(4700)->addText('NIP. 000000000 000000 0 000', ['size' => 11], array('align' => 'center'));
+
+
+
+        // Membuat table untuk bagian "Pada Tanggal"
+        // $tableTanggal = $section->addTable(['borderSize' => 0, 'cellMargin' => 0, 'borderColor' => 'auto']);
+        // $tableTanggal->addRow();
+        // $tableTanggal->addCell(1000)->addText('Dikeluarkan di', ['size' => 11]);
+        // $tableTanggal->addCell(1000)->addText(':', ['size' => 11]);
+        // $tableTanggal->addCell(1000)->addText('M A G E T A N', ['size' => 11, 'alignment' => 'right']);
+        
+        // $tableTanggal->addRow();
+        // $tableTanggal->addCell(5000, ['cellMarginTop' => 100])->addText('Pada Tanggal', ['size' => 11, 'borderBottomSize' => 2]);
+        // $tableTanggal->addCell(5000)->addText(':', ['size' => 11, 'borderBottomSize' => 2]);
+        // $bulanIndonesia = Carbon::parse(now())->locale('id_ID')->isoFormat('MMMM YYYY');
+
+        // $tableTanggal->addCell(5000)->addText($bulanIndonesia, ['size' => 11, 'borderBottomSize' => 2]);
+        // // Membuat table untuk bagian "INSPEKTUR KABUPATEN MAGETAN"
+        // $tableInspektur = $section->addTable(['borderSize' => 0, 'cellMargin' => 0, 'borderColor' => 'black']);
+        // $tableInspektur->addRow();
+        // $tableInspektur->addCell(15000, ['gridSpan' => 3])->addText('INSPEKTUR KABUPATEN MAGETAN', ['size' => 11, 'alignment' => 'center', 'bold' => true]);
+
+        // // Membuat table untuk bagian "Nama Inspektur"
+        // $tableNamaInspektur = $section->addTable(['borderSize' => 0, 'cellMargin' => 0, 'borderColor' => 'black']);
+        // $tableNamaInspektur->addRow();
+        // $tableNamaInspektur->addCell(15000, ['gridSpan' => 3])->addText('Nama Inspektur', ['size' => 11, 'alignment' => 'center', 'bold' => true, 'underline' => 'single']);
+
+        // // Membuat table untuk bagian "Nama Pangkat"
+        // $tableNamaPangkat = $section->addTable(['borderSize' => 0, 'cellMargin' => 0, 'borderColor' => 'black']);
+        // $tableNamaPangkat->addRow();
+        // $tableNamaPangkat->addCell(15000, ['gridSpan' => 3])->addText('Nama Pangkat', ['size' => 11, 'alignment' => 'center']);
+
+        // // Membuat table untuk bagian "NIP"
+        // $tableNIP = $section->addTable(['borderSize' => 0, 'cellMargin' => 0, 'borderColor' => 'black']);
+        // $tableNIP->addRow();
+        // $tableNIP->addCell(15000, ['gridSpan' => 3])->addText('NIP. 00000000 000000 0 000', ['size' => 11, 'alignment' => 'center']);
+
+
+        // // Baris pertama dengan sel kosong rowspan 6
+        // $row = $table->addRow();
+        // $row->addCell();
+        // $row->addCell()->addText('Dikeluarkan di', ['size' => 11]);
+        // $row->addCell()->addText(':', ['size' => 11]);
+        // $row->addCell()->addText('M A G E T A N', ['size' => 11, 'alignment' => 'right']);
+
+        // // Baris kedua
+        // $row = $table->addRow();
+        // $row->addCell()->addText('Pada Tanggal', ['size' => 11, 'borderBottomSize' => 2]);
+        // $row->addCell()->addText(':', ['size' => 11, 'borderBottomSize' => 2]);
+        // $row->addCell()->addText(date("F Y"), ['size' => 11, 'alignment' => 'right', 'borderBottomSize' => 2]);
+
+// Baris ketiga
+// $row = $table->addRow();
+// $row->addCell(['vMerge' => 'restart', 'valign' => 'center'])->addText('INSPEKTUR KABUPATEN MAGETAN', ['size' => 11, 'bold' => true, 'alignment' => 'center']);
+// $row->addCell(['vMerge' => 'continue', 'valign' => 'center']);
+// $row->addCell(['vMerge' => 'continue', 'valign' => 'center']);
+
+// // Baris keempat
+// $row = $table->addRow();
+// $row->addCell(['vMerge' => 'restart', 'valign' => 'center', 'gridSpan' => 3])->addText('Nama Inspektur', ['size' => 11, 'bold' => true, 'underline' => 'single', 'alignment' => 'center', 'spaceAfter' => 100]);
+
+// // Baris kelima
+// $row = $table->addRow();
+// $row->addCell(['vMerge' => 'continue', 'valign' => 'center', 'gridSpan' => 3])->addText('Nama Pangkat', ['size' => 11, 'bold' => true, 'alignment' => 'center']);
+
+// // Baris keenam
+// $row = $table->addRow();
+// $row->addCell(['vMerge' => 'continue', 'valign' => 'center', 'gridSpan' => 3])->addText('NIP. 00000000 000000 0 000', ['size' => 11, 'alignment' => 'center']);
 
         // Simpan ke file
         $filename = 'Surat Perintah Tugas ' . date('Y-m-d H-i-s') . '.docx';
