@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Illuminate\Support\Arr;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 
@@ -738,23 +739,28 @@ class SPTController extends Controller
 
         // Buat objek PHPWord
         $phpWord = new PhpWord();
-        $section = $phpWord->addSection();
+        $section = $phpWord->addSection([
+            'marginTop'    => 600,  // Convert inches to cm
+            'marginBottom' => 600, // Convert inches to cm
+            'marginRight'  => 800,
+            'marginLeft'   => 800// Convert inches to cm
+        ]);        
         $table = $section->addTable();
         $row = $table->addRow();
         $lebarA4 = 21 * 600; 
 
         // Kolom untuk logo di bagian kiri
-        $row->addCell(2500)->addImage(public_path("logo.png"), ['width' => 75]);
+        $row->addCell(2500)->addImage(public_path("logo.png"), ['width' => 68]);
 
         // Kolom untuk teks di bagian kanan
         $textCell = $row->addCell(7500);
-        $textCell->addText('PEMERINTAH KABUPATEN MAGETAN', ['bold' => true, 'size' => 12.7, 'spaceAfter' => 100]);
-        $textCell->addText('I N S P E K T O R A T', ['bold' => true, 'size' => 16, 'spaceAfter' => 100]);
-        $textCell->addText('Jl. Tripandita No. 17 Magetan Kode Pos 63319', ['size' => 10, 'spaceAfter' => 100]);
-        $textCell->addText('Telp. (0351) 897113 Fax. (0351) 897161', ['size' => 10, 'spaceAfter' => 100]);
-        $textCell->addText('E-mail : inspektorat@magetan.go.id Website : http://inspektorat.magetan.go.id', ['size' => 10]);
+        $textCell->addText('PEMERINTAH KABUPATEN MAGETAN', ['bold' => true, 'size' => 11], array('align' => 'center', 'space' => array('line' => -50)));
+        $textCell->addText('I N S P E K T O R A T', ['bold' => true, 'size' => 13], array('align' => 'center', 'space' => array('line' => -50)));
+        $textCell->addText('Jl. Tripandita No. 17 Magetan Kode Pos 63319', ['size' => 9], array('align' => 'center', 'space' => array('line' => -50)));
+        $textCell->addText('Telp. (0351) 897113 Fax. (0351) 897161', ['size' => 9], array('align' => 'center', 'space' => array('line' => -50)));
+        $textCell->addText('E-mail : inspektorat@magetan.go.id Website : http://inspektorat.magetan.go.id', ['size' => 9], array('align' => 'center', 'space' => array('line' => -50)));
 
-        $textCell->setAlignment(\PhpOffice\PhpWord\SimpleType\Jc::CENTER);
+        $section->addLine(['weight' => 2,'width' => 510, 'height' => 0]);
 
         $textRunHeader = $section->addTextRun(['alignment' => 'center']);
         $textRunHeader->addText('SURAT PERINTAH TUGAS', ['bold' => true, 'underline' => 'single', 'size' => 16]);
@@ -769,28 +775,28 @@ class SPTController extends Controller
         $tableDasar->addCell($lebarA4 * 0.14)->addText('DASAR', ['bold' => true, 'size' => 11]);
         $tableDasar->addCell($lebarA4 * 0.01)->addText(':', ['bold' => true, 'size' => 11]);
         $cleanedDasarSPT = strip_tags($spt->dasar_spt);
-        $tableDasar->addCell($lebarA4 * 0.85)->addText($cleanedDasarSPT, ['size' => 11]);
+        $tableDasar->addCell($lebarA4 * 0.85)->addText(' '.$cleanedDasarSPT, ['size' => 11]);
 
         // MEMERINTAHKAN
         $textRunCenter = $section->addTextRun(['alignment' => 'center']);
         $textRunCenter->addText('M E M E R I N T A H K A N', ['bold' => true, 'size' => 11]);
 
         // Tambahkan tabel untuk bagian "KEPADA"
-        $table = $section->addTable(['borderSize' => 1, 'alignment' => 'center']);
+        $table = $section->addTable(['borderSize' => 4, 'alignment' => 'center']);
         
         $table->addRow();
-        $table->addCell($lebarA4 * 0.14)->addText('KEPADA', ['bold' => true, 'size' => 11, 'borderColor' => 'white']);        
-        $table->addCell($lebarA4 * 0.01)->addText(':', ['bold' => true, 'size' => 11, 'borderColor' => 'white']);        
+        $table->addCell($lebarA4 * 0.14)->addText('KEPADA', ['bold' => true, 'size' => 11, 'borderSize' => 0]);        
+        $table->addCell($lebarA4 * 0.01)->addText(':', ['bold' => true, 'size' => 11, 'borderSize' => 0]);        
         $table->addCell($lebarA4 * 0.05)->addText('No.', ['bold' => true, 'size' => 11], array('align' => 'center'));
-        $table->addCell($lebarA4 * 0.45)->addText('NAMA', ['bold' => true, 'size' => 11, 'spaceAfter' => 250,'spaceBefore' => 250], array('align' => 'center'));
-        $table->addCell($lebarA4 * 0.2)->addText('KETERANGAN', ['bold' => true, 'size' => 11], array('align' => 'center'));
+        $table->addCell($lebarA4 * 0.43)->addText('NAMA', ['bold' => true, 'size' => 11], array('align' => 'center'));
+        $table->addCell($lebarA4 * 0.22)->addText('KETERANGAN', ['bold' => true, 'size' => 11], array('align' => 'center'));
         $table->addCell($lebarA4 * 0.15)->addText('JANGKA WAKTU', ['bold' => true, 'size' => 11], array('align' => 'center'));
         
         $no = 1;
         foreach ($spt->anggotaSPT as $anggota) {
             $table->addRow();
-            $table->addCell($lebarA4 * 0.14)->addText('');            
-            $table->addCell($lebarA4 * 0.01)->addText('');            
+            $table->addCell($lebarA4 * 0.14)->addText('', ['borderSize' => 0]);            
+            $table->addCell($lebarA4 * 0.01)->addText('', ['borderSize' => 0]);         
             $table->addCell($lebarA4 * 0.05)->addText($no++, ['size' => 11], array('align' => 'center'));
             $table->addCell($lebarA4 * 0.43)->addText('Sdr. ' . strtoupper($anggota->relasi_pegawai->nama_pegawai), ['size' => 11]);
             $table->addCell($lebarA4 * 0.22)->addText($anggota->keterangan, ['size' => 11], array('align' => 'center'));
@@ -802,26 +808,21 @@ class SPTController extends Controller
         // UNTUK
         $tableUntuk = $section->addTable(['borderSize' => 0, 'alignment' => 'center', 'borderColor' => 'white']);
         $tableUntuk->addRow();
-        $tableUntuk->addCell($lebarA4 * 0.15)->addText('UNTUK', ['bold' => true, 'size' => 11]);
+        $tableUntuk->addCell($lebarA4 * 0.14)->addText('UNTUK', ['bold' => true, 'size' => 11]);
         $tableUntuk->addCell($lebarA4 * 0.01)->addText(':', ['bold' => true, 'size' => 11]);
-        $tableUntuk->addCell($lebarA4 * 0.85)->addText($spt->untuk_spt, ['size' => 11]);
-
-        // Tambahkan paragraf untuk bagian informasi tambahan
-
-        // $textRunJustify = $section->addTextRun(['alignment' => 'both']);
-        // $textRunJustify->addText('Kegiatan tersebut dilaksanakan selama ' . $jangkaWaktu . ' (' . $ketJangkaWaktu . ') hari kerja dalam kurun waktu ' . $kurun_waktu . ' dan biaya yang berkaitan dengan penugasan menjadi beban Anggaran Inspektorat Kabupaten Magetan.', ['size' => 11]);
-        // $section->addTextBreak();
-        // $textRunJustify->addText('Kepada pihak-pihak yang bersangkutan diminta kesediannya untuk memberikan keterangan yang diperlukan guna kelancaran dan penyelesaian tugas dimaksud.', ['size' => 11]);
-        // $section->addTextBreak();
-        // $textRunJustify->addText('Sebagai informasi, disampaikan bahwa Inspektorat Kabupaten Magetan tidak memungut biaya apapun atas pelayanan yang diberikan, dan untuk menjaga integritas dimohon untuk tidak menyampaikan pemberian dalam bentuk apapun kepada Pejabat/Pegawai Inspektorat Kabupaten Magetan.', ['size' => 11]);
-
+        $tableUntuk->addCell($lebarA4 * 0.85)->addText(' '.$spt->untuk_spt, ['size' => 11]);
 
         $section->addTextBreak();
 
-        $section->addText('Kegiatan tersebut dilaksanakan selama ' . $jangkaWaktu . ' (' . $ketJangkaWaktu . ') hari kerja dalam kurun waktu ' . $kurun_waktu . ' dan biaya yang berkaitan dengan penugasan menjadi beban Anggaran Inspektorat Kabupaten Magetan.', ['size' => 11, 'alignment' => 'both']);
-        $section->addText('Kepada pihak-pihak yang bersangkutan diminta kesediannya untuk memberikan keterangan yang diperlukan guna kelancaran dan penyelesaian tugas dimaksud.', ['size' => 11, 'alignment' => 'both']);
-        $section->addText('Sebagai informasi, disampaikan bahwa Inspektorat Kabupaten Magetan tidak memungut biaya apapun atas pelayanan yang diberikan, dan untuk menjaga integritas dimohon untuk tidak menyampaikan pemberian dalam bentuk apapun kepada Pejabat/Pegawai Inspektorat Kabupaten Magetan.', ['size' => 11, 'alignment' => 'both']);
-
+        $paragraph1 = 'Kegiatan tersebut dilaksanakan selama ' . $jangkaWaktu . ' (' . $ketJangkaWaktu . ') hari kerja dalam kurun waktu ' . $kurun_waktu . ' dan biaya yang berkaitan dengan penugasan menjadi beban Anggaran Inspektorat Kabupaten Magetan.';
+        $paragraph2 = 'Kepada pihak-pihak yang bersangkutan diminta kesediannya untuk memberikan keterangan yang diperlukan guna kelancaran dan penyelesaian tugas dimaksud.';
+        $paragraph3 = 'Sebagai informasi, disampaikan bahwa Inspektorat Kabupaten Magetan tidak memungut biaya apapun atas pelayanan yang diberikan, dan untuk menjaga integritas dimohon untuk tidak menyampaikan pemberian dalam bentuk apapun kepada Pejabat/Pegawai Inspektorat Kabupaten Magetan.';
+        
+        // Add paragraphs to the section with indentation
+        $section->addText($paragraph1, ['size' => 11], ['alignment' => 'both', 'indentation' => ['left' => 600]]);
+        $section->addText($paragraph2, ['size' => 11], ['alignment' => 'both', 'indentation' => ['left' => 600]]);
+        $section->addText($paragraph3, ['size' => 11], ['alignment' => 'both', 'indentation' => ['left' => 600]]);
+        
         $section->addTextBreak();
 
         $tableFooter = $section->addTable(['width' => 50, 'borderColor' => 'white', 'borderSize' => 1, 'alignment' => 'right']);
@@ -839,12 +840,6 @@ class SPTController extends Controller
         $tableFoot = $section->addTable(['width' => 50, 'borderColor' => 'white', 'borderSize' => 1, 'alignment' => 'right']);
         $tableFoot->addRow();
         $tableFoot->addCell(4700)->addText('INSPEKTUR KABUPATEN MAGETAN', ['size' => 11, 'bold' => true], array('align' => 'center'));
-
-        $tableFoot->addRow();
-        $tableFoot->addCell(4700)->addText('', ['size' => 11], array('align' => 'center'));
-
-        $tableFoot->addRow();
-        $tableFoot->addCell(4700)->addText('', ['size' => 11], array('align' => 'center'));
 
         $tableFoot->addRow();
         $tableFoot->addCell(4700)->addText('', ['size' => 11], array('align' => 'center'));
